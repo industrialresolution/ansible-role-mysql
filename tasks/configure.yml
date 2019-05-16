@@ -76,6 +76,10 @@
     mode: 0640
   when: mysql_log == "" and mysql_log_error != ""
 
+- name: Change context on error log file  (if installing).
+  command: chcon system_u:object_r:mysqld_log_t:s0 "{{ mysql_log_error }}"
+  when: (mysql_install_packages | bool)
+
 - name: Ensure MySQL is started and enabled on boot.
   service: "name={{ mysql_daemon }} state=started enabled={{ mysql_enabled_on_startup }}"
   register: mysql_service_configuration
